@@ -1,75 +1,62 @@
-import { Card, Text, Title, Badge, Stack, Group, SimpleGrid } from "@mantine/core";
+import { Card, Text, Title, Badge, Stack, Group, SimpleGrid, Button } from "@mantine/core";
 import { db } from "@/db";
 import { inzeraty } from "@/db/schemas/inzeraty";
+import Link from "next/link";
 
 
-
-// const inzeraty = [
-//   {
-//     id: 1,
-//     nazev: "Inzerát 1",
-//     popis: "Popis inzerátu 1",
-//     cena: 9000,
-//     kategorie: "elektronika",
-//     stav: "použité",
-//     rezervovano: false
-//   },
-//   {
-//     id: 2,
-//     nazev: "Notebook Lenovo",
-//     popis: "Herní notebook, dobrý stav",
-//     cena: 0,
-//     kategorie: "Elektronika",
-//     stav: "Použité",
-//     rezervovano: true
-//   },
-//   {
-//     id: 3,
-//     nazev: "Kolo",
-//     popis: "Starší kolo, ale funkční",
-//     cena: 1500,
-//     kategorie: "Sport",
-//     stav: "Použité",
-//     rezervovano: false
-//   }
-// ];
 
 export default async function Page()
 {
   const data = await db.select().from(inzeraty);
 
   return (
+
     <Stack>
-      <Title order={2}>Bazarové inzeráty</Title>
+
+      <Group justify="space-between" align="flex-start">
+        <div>
+          <Title order={2}>Bazar</Title>
+          <Text c="dimmed" size="sm">
+            Prohlížej si inzeráty ostatních uživatelů nebo najdi něco, co se ti hodí.
+          </Text>
+        </div>
+
+        <Button variant="filled" color="blue">
+          Přidat položku
+        </Button>
+      </Group>
+
+      <Title order={2}>inzeráty</Title>
 
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
           {data.map((item) => (
-            <Card key={item.id} shadow="sm" padding="md" withBorder>
-              <Stack>
-                <Group justify="space-between">
-                  <Text fw={600}>{item.nazev}</Text>
+                <Link href={`/inzeraty/${item.id}`} style={{ textDecoration: "none" }}>
+                  <Card shadow="sm" padding="md" withBorder>
+                    <Stack>
+                      <Group justify="space-between">
+                        <Text fw={600}>{item.nazev}</Text>
+                        <Badge color="blue">{item.kategorie}</Badge>
+                      </Group>
 
-                  <Badge color="blue">{item.kategorie}</Badge>
-                </Group>
+                      <Text size="sm">{item.popis}</Text>
 
-                <Text size="sm">{item.popis}</Text>
+                      <Group justify="space-between">
+                        <Text fw={700}>
+                          {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
+                        </Text>
 
-                <Group justify="space-between">
-                  <Text fw={700}>
-                    {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
-                  </Text>
+                        <Badge color="gray">{item.stav}</Badge>
+                      </Group>
 
-                  <Badge color="gray">{item.stav}</Badge>
-                </Group>
-
-                <Badge
-                  color={item.rezervovano ? "red" : "green"}
-                  variant="light"
-                >
-                  {item.rezervovano ? "Rezervováno" : "Volné"}
-              </Badge>
-              </Stack>
-            </Card>
+                      <Badge
+                        color={item.rezervovano ? "red" : "green"}
+                        variant="light"
+                      >
+                        {item.rezervovano ? "Rezervováno" : "Volné"}
+                      </Badge>
+                    </Stack>
+                  </Card>
+                </Link>
       ))}
       </SimpleGrid>
 

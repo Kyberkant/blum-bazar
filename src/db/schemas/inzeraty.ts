@@ -14,3 +14,6 @@ export const inzeraty = sqliteTable("inzeraty", {
 });
 
 export type Inzerat = typeof inzeraty.$inferSelect;
+
+
+//nove data npm run db:studio
