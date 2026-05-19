@@ -1,4 +1,4 @@
-import { Card, Text, Title, Badge, Stack, Group } from "@mantine/core";
+import { Card, Text, Title, Badge, Stack, Group, SimpleGrid } from "@mantine/core";
 
 const inzeraty = [
   {
@@ -33,28 +33,30 @@ export default function Page()
     <Stack>
       <Title order={2}>Bazarové inzeráty</Title>
 
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+          {inzeraty.map((item) => (
+            <Card key={item.id} shadow="sm" padding="md" withBorder>
+              <Stack>
+                <Group justify="space-between">
+                  <Text fw={600}>{item.nazev}</Text>
 
-      {inzeraty.map((item) => (
-        <Card key={item.id} shadow="sm" padding="md" withBorder>
-          <Stack>
-            <Group justify="space-between">
-              <Text fw={600}>{item.nazev}</Text>
+                  <Badge color="blue">{item.kategorie}</Badge>
+                </Group>
 
-              <Badge color="blue">{item.kategorie}</Badge>
-            </Group>
+                <Text size="sm">{item.popis}</Text>
 
-            <Text size="sm">{item.popis}</Text>
+                <Group justify="space-between">
+                  <Text fw={700}>
+                    {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
+                  </Text>
 
-            <Group justify="space-between">
-              <Text fw={700}>
-                {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
-              </Text>
-
-              <Badge color="gray">{item.stav}</Badge>
-            </Group>
-          </Stack>
-        </Card>
+                  <Badge color="gray">{item.stav}</Badge>
+                </Group>
+              </Stack>
+            </Card>
       ))}
+      </SimpleGrid>
+
     </Stack>
   );
 }
