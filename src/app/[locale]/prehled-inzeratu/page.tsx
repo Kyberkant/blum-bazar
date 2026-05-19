@@ -7,7 +7,8 @@ const inzeraty = [
     popis: "Popis inzerátu 1",
     cena: 9000,
     kategorie: "elektronika",
-    stav: "použité"
+    stav: "použité",
+    rezervovano: false
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ const inzeraty = [
     cena: 0,
     kategorie: "Elektronika",
     stav: "Použité",
+    rezervovano: true
   },
   {
     id: 3,
@@ -24,6 +26,7 @@ const inzeraty = [
     cena: 1500,
     kategorie: "Sport",
     stav: "Použité",
+    rezervovano: false
   }
 ];
 
@@ -52,6 +55,13 @@ export default function Page()
 
                   <Badge color="gray">{item.stav}</Badge>
                 </Group>
+
+                <Badge
+                color={item.rezervovano ? "red" : "green"}
+                variant="light"
+              >
+                {item.rezervovano ? "Rezervováno" : "Volné"}
+              </Badge>
               </Stack>
             </Card>
       ))}
@@ -79,9 +89,6 @@ export default function Page()
 //schéma tabulek najdete v src/db/schemas/,
 
 //roadmap
-//  1. grid layout
-
-// → 2–3 karty vedle sebe
 
 //  2. tlačítko „detail“
 
