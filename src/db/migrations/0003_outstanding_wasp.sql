@@ -1,0 +1,1 @@
+ALTER TABLE `inzeraty` ADD `obrazek` text NOT NULL;

@@ -29,35 +29,40 @@ export default async function Page()
       <Title order={2}>inzeráty</Title>
 
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
-          {data.map((item) => (
-                <Link href={`/inzeraty/${item.id}`} style={{ textDecoration: "none" }}>
-                  <Card shadow="sm" padding="md" withBorder>
-                    <Stack>
-                      <Group justify="space-between">
-                        <Text fw={600}>{item.nazev}</Text>
-                        <Badge color="blue">{item.kategorie}</Badge>
-                      </Group>
+        {data.map((item) => (
+          <Link
+            key={item.id}
+            href={`/cs/prehled-inzeratu/${item.id}`}
+            style={{ textDecoration: "none" }}
+          >
+            <Card shadow="sm" padding="md" withBorder style={{ cursor: "pointer"}}>
 
-                      <Text size="sm">{item.popis}</Text>
+              <Stack>
+                <Group justify="space-between">
+                  <Text fw={600}>{item.nazev}</Text>
+                  <Badge color="blue">{item.kategorie}</Badge>
+                </Group>
 
-                      <Group justify="space-between">
-                        <Text fw={700}>
-                          {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
-                        </Text>
+                <Text size="sm">{item.popis}</Text>
 
-                        <Badge color="gray">{item.stav}</Badge>
-                      </Group>
+                <Group justify="space-between">
+                  <Text fw={700}>
+                    {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
+                  </Text>
 
-                      <Badge
-                        color={item.rezervovano ? "red" : "green"}
-                        variant="light"
-                      >
-                        {item.rezervovano ? "Rezervováno" : "Volné"}
-                      </Badge>
-                    </Stack>
-                  </Card>
-                </Link>
-      ))}
+                  <Badge color="gray">{item.stav}</Badge>
+                </Group>
+
+                <Badge
+                  color={item.rezervovano ? "red" : "green"}
+                  variant="light"
+                >
+                  {item.rezervovano ? "Rezervováno" : "Volné"}
+                </Badge>
+              </Stack>
+            </Card>
+          </Link>
+        ))}
       </SimpleGrid>
 
     </Stack>
