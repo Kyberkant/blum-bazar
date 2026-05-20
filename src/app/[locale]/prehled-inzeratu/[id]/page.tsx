@@ -10,17 +10,17 @@ import {
   Group,
   Button,
   Divider,
-  Alert,
-  Image,
+  Alert
 } from "@mantine/core";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function Page({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = await params;
 
   const itemId = Number(id);
 
@@ -44,13 +44,6 @@ export default async function Page({
       </Link>
 
       <Card shadow="sm" padding="lg" withBorder>
-        <Card.Section>
-          <Image
-            src={item.obrazek || "/placeholder.jpg"}
-            height={160}
-            alt={item.nazev}
-          />
-        </Card.Section>
 
         <Stack>
           <Group justify="space-between">

@@ -13,7 +13,7 @@ export const inzeraty = sqliteTable("inzeraty", {
   rezervovano: integer().notNull(), // 0 = false, 1 = true
 
   // obrazek: text().notNull().default(""),
-   obrazek: text().notNull().default("public/test.png")
+   obrazek: text().notNull().default("/obrazky/test.png")
 });
 
 export type Inzerat = typeof inzeraty.$inferSelect;
