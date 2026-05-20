@@ -10,10 +10,11 @@ import {
   Group,
   Button,
   Divider,
-  Alert
+  Alert,
+  Image
 } from "@mantine/core";
 import Link from "next/link";
-import Image from "next/image";
+
 
 export default async function Page({
   params,
@@ -45,6 +46,24 @@ export default async function Page({
 
       <Card shadow="sm" padding="lg" withBorder>
 
+        {/* FAKE IMAGE */}
+        <div
+          style={{
+            width: "100%",
+            height: 180,
+            backgroundColor: "#e9ecef",
+            borderRadius: 8,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#868e96",
+            fontSize: 14,
+            fontWeight: 500,
+            marginBottom: 16,
+          }}
+        >
+          Obrázek
+        </div>
         <Stack>
           <Group justify="space-between">
             <Title order={2}>{item.nazev}</Title>
