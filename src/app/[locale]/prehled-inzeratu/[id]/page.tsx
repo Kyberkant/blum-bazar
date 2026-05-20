@@ -1,21 +1,37 @@
 import { db } from "@/db";
 import { inzeraty } from "@/db/schemas/inzeraty";
 import { eq } from "drizzle-orm";
-import { Card, Text, Title, Badge, Stack, Group, Button, Divider, Alert} from "@mantine/core";
+import {
+  Card,
+  Text,
+  Title,
+  Badge,
+  Stack,
+  Group,
+  Button,
+  Divider,
+  Alert,
+  Image,
+} from "@mantine/core";
 import Link from "next/link";
-
 
 export default async function Page({
   params,
 }: {
   params: { id: string };
 }) {
-  const id = Number(params.id);
+  const { id } = params;
+
+  const itemId = Number(id);
+
+  if (isNaN(itemId)) {
+    return <Alert color="red">Neplatné ID</Alert>;
+  }
 
   const [item] = await db
     .select()
     .from(inzeraty)
-    .where(eq(inzeraty.id, id));
+    .where(eq(inzeraty.id, itemId));
 
   if (!item) {
     return <Alert color="red">Inzerát nenalezen</Alert>;
@@ -23,13 +39,19 @@ export default async function Page({
 
   return (
     <Stack>
-      {/* ZPĚT */}
-      <Button component={Link} href="/inzeraty" variant="light">
-        ← Zpět na bazar
-      </Button>
+      <Link href="/cs/prehled-inzeratu" style={{ textDecoration: "none" }}>
+        <Button variant="light">← Zpět na bazar</Button>
+      </Link>
 
-      {/* DETAIL */}
       <Card shadow="sm" padding="lg" withBorder>
+        <Card.Section>
+          <Image
+            src={item.obrazek || "/placeholder.jpg"}
+            height={160}
+            alt={item.nazev}
+          />
+        </Card.Section>
+
         <Stack>
           <Group justify="space-between">
             <Title order={2}>{item.nazev}</Title>
