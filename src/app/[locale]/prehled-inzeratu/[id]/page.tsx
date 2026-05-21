@@ -87,7 +87,15 @@ export default async function Page({
           <Divider />
 
           <Alert title="Kontakt">
-            Kontakt na prodávajícího: +420 123 456 789
+            <Stack gap={4}>
+                <Text>
+                  Prodejce: {item.prodejce}
+                </Text>
+
+                <Text>
+                  Email: {item.email}
+                </Text>
+              </Stack>
           </Alert>
 
           <Text c="dimmed" size="sm">
