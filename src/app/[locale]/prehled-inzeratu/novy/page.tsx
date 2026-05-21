@@ -1,3 +1,5 @@
+
+
 import {
   TextInput,
   Textarea,
@@ -83,6 +85,7 @@ export default function Page() {
               label="Cena"
               name="cena"
               placeholder="5000"
+              disabled={false}
 
             />
 
@@ -112,9 +115,9 @@ export default function Page() {
               label="Stav inzerátu"
               name="stav"
               data={[
-                "Nové",
-                "Použité",
-                "Poškozené",
+                "Dostupné",
+                "Rezervované",
+                "Prodáno",
               ]}
               required
             />
@@ -150,3 +153,5 @@ export default function Page() {
     </Stack>
   );
 }
+
+// TODO zablokovat cenu když je zaškrtnuto zdarma

@@ -54,15 +54,22 @@ export default async function Page()
                     {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
                   </Text>
 
-                  <Badge color="gray">{item.stav}</Badge>
+
+                  <Badge
+                    color={
+                      item.stav === "Dostupné"
+                        ? "green"
+                        : item.stav === "Rezervováno"
+                        ? "yellow"
+                        : "red"
+                    }
+                    variant="light"
+                    size="sm"
+                  >
+                    {item.stav}
+                  </Badge>
                 </Group>
 
-                <Badge
-                  color={item.rezervovano ? "red" : "green"}
-                  variant="light"
-                >
-                  {item.rezervovano ? "Rezervováno" : "Volné"}
-                </Badge>
               </Stack>
             </Card>
           </Link>
@@ -73,33 +80,3 @@ export default async function Page()
   );
 }
 
-// inzeraty.map(...)
-// prochází seznam a vytváří UI
-
-//Card
-//jeden inzerát = jedna karta
-
-//Stack
-//věci pod sebou
-
-//Group
-//věci vedle sebe
-
-//Badge
-//malé štítky (kategorie, stav)
-
-//schéma tabulek najdete v src/db/schemas/,
-
-//roadmap
-
-//  2. tlačítko „detail“
-
-// → /inzeraty/1
-
-//  3. filtr
-
-// → kategorie
-
-//  4. reálná data z DB
-
-// → Drizzle + SQLite
