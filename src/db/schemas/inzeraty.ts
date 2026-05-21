@@ -7,13 +7,16 @@ export const inzeraty = sqliteTable("inzeraty", {
   popis: text().notNull(),
 
   cena: integer().notNull(),
+
   kategorie: text().notNull(),
+  stav: text().notNull(),
 
-  stav: text().notNull(), // třeba "Použité"
-  rezervovano: integer().notNull(), // 0 = false, 1 = true
+  rezervovano: integer().notNull(),
 
-  // obrazek: text().notNull().default(""),
-   obrazek: text().notNull().default("/obrazky/test.png")
+  prodejce: text().notNull(),
+  email: text().notNull(),
+
+  obrazek: text(),
 });
 
 export type Inzerat = typeof inzeraty.$inferSelect;

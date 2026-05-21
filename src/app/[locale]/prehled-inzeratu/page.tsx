@@ -21,9 +21,13 @@ export default async function Page()
           </Text>
         </div>
 
-        <Button variant="filled" color="blue">
-          Přidat položku
-        </Button>
+        <Link href="/cs/prehled-inzeratu/novy"
+        style={{ textDecoration: "none" }}>
+
+          <Button variant="filled" color="blue">
+            Přidat položku
+          </Button>
+        </Link>
       </Group>
 
       <Title order={2}>inzeráty</Title>
