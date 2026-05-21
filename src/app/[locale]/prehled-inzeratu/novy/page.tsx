@@ -101,6 +101,8 @@ export default function Page() {
                 "Sport",
                 "Nábytek",
                 "Oblečení",
+                "Knihy",
+                "Dětské věci",
                 "Ostatní"
               ]}
               required
