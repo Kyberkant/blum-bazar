@@ -112,9 +112,9 @@ export default function Page() {
               label="Stav inzerátu"
               name="stav"
               data={[
-                "Nové",
-                "Použité",
-                "Poškozené",
+                "Dostupné",
+                "Rezervované",
+                "Prodáno",
               ]}
               required
             />

@@ -16,6 +16,9 @@ import {
 import Link from "next/link";
 
 
+
+
+
 export default async function Page({
   params,
 }: {
@@ -37,6 +40,22 @@ export default async function Page({
   if (!item) {
     return <Alert color="red">Inzerát nenalezen</Alert>;
   }
+
+
+async function updateStav(formData: FormData) {
+  "use server";
+
+  const novyStav = String(formData.get("stav"));
+
+  await db
+    .update(inzeraty)
+    .set({
+      stav: novyStav,
+    })
+    .where(eq(inzeraty.id, itemId));
+}
+
+
 
   return (
     <Stack>
@@ -79,8 +98,18 @@ export default async function Page({
               {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
             </Text>
 
-            <Badge color={item.rezervovano ? "red" : "green"}>
-              {item.rezervovano ? "Rezervováno" : "Volné"}
+            <Badge
+              color={
+                item.stav === "Dostupné"
+                  ? "green"
+                  : item.stav === "Rezervováno"
+                  ? "yellow"
+                  : item.stav === "Prodáno"
+                  ? "red"
+                  : "gray"
+              }
+            >
+              {item.stav}
             </Badge>
           </Group>
 
@@ -100,9 +129,45 @@ export default async function Page({
 
           <Text c="dimmed" size="sm">
             Stav: {item.stav}
+            <form action={updateStav}>
+              <Group>
+
+                <Button
+                  type="submit"
+                  name="stav"
+                  value="Dostupné"
+                  color="green"
+                  variant="light"
+                >
+                  Dostupné
+                </Button>
+
+                <Button
+                  type="submit"
+                  name="stav"
+                  value="Rezervováno"
+                  color="yellow"
+                  variant="light"
+                >
+                  Rezervováno
+                </Button>
+
+                <Button
+                  type="submit"
+                  name="stav"
+                  value="Prodáno"
+                  color="red"
+                  variant="light"
+                >
+                  Prodáno
+                </Button>
+
+              </Group>
+            </form>
           </Text>
         </Stack>
       </Card>
     </Stack>
   );
 }
+
