@@ -129,6 +129,7 @@ async function updateStav(formData: FormData) {
 
           <Text c="dimmed" size="sm">
             Stav: {item.stav}
+          </Text>
             <form action={updateStav}>
               <Group>
 
@@ -164,7 +165,6 @@ async function updateStav(formData: FormData) {
 
               </Group>
             </form>
-          </Text>
         </Stack>
       </Card>
     </Stack>
