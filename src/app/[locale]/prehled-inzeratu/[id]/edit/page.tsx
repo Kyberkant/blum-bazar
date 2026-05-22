@@ -40,11 +40,11 @@ async function updateInzerat(formData: FormData) {
     !prodejce ||
     !email
   ) {
-    return;
+    redirect(`/cs/prehled-inzeratu/${id}/edit?error=1`);
   }
 
   if (!email.includes("@")) {
-  return;
+  redirect(`/cs/prehled-inzeratu/${id}/edit?error=1`);
   }
 
   await db
@@ -69,10 +69,14 @@ async function updateInzerat(formData: FormData) {
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
-}) {
+  searchParams: Promise<{ error?: string }>;
+})
+{
   const { id } = await params;
+  const { error } = await searchParams;
 
   const inzeratId = Number(id);
 
@@ -100,6 +104,12 @@ export default async function Page({
       >
         <Button variant="light">← Zpět na detail</Button>
       </Link>
+
+      {error && (
+        <Alert color="red" title="Chyba">
+          Vyplň všechna povinná pole
+        </Alert>
+      )}
 
       {/* FORM */}
       <Card shadow="sm" padding="lg" withBorder maw={600}>
