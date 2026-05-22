@@ -1,18 +1,29 @@
 
-import { Card, Text, Title, Badge, Stack, Group, SimpleGrid, Button } from "@mantine/core";
+import { Card, Text, Title, Badge, Stack, Group, SimpleGrid, Button, TextInput } from "@mantine/core";
 import { db } from "@/db";
 import { inzeraty } from "@/db/schemas/inzeraty";
 import Link from "next/link";
 
 
 
-export default async function Page()
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string }>;
+})
 {
+  const { search } = await searchParams;
   const data = await db.select().from(inzeraty);
+
+  const filtered = data.filter((item) =>
+  (item.nazev + item.popis)
+    .toLowerCase()
+    .includes((search || "").toLowerCase())
+  );
 
   return (
 
-    <Stack>
+    <Stack gap="md">
 
       <Group justify="space-between" align="flex-start">
         <div>
@@ -31,10 +42,18 @@ export default async function Page()
         </Link>
       </Group>
 
+      <form>
+        <TextInput
+          name="search"
+          placeholder="Hledat podle názvu nebo popisu..."
+          defaultValue={search}
+        />
+      </form>
+
       <Title order={2}>inzeráty</Title>
 
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
-        {data.map((item) => (
+        {filtered.map((item) => (
           <Link
             key={item.id}
             href={`/cs/prehled-inzeratu/${item.id}`}
