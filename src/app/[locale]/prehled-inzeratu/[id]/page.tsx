@@ -59,9 +59,17 @@ async function updateStav(formData: FormData) {
 
   return (
     <Stack>
-      <Link href="/cs/prehled-inzeratu" style={{ textDecoration: "none" }}>
-        <Button variant="light">← Zpět na bazar</Button>
-      </Link>
+
+      <Group justify="space-between" align="flex-start">
+
+        <Link href="/cs/prehled-inzeratu" style={{ textDecoration: "none" }}>
+          <Button variant="light">← Zpět na bazar</Button>
+        </Link>
+
+        <Link href={`/cs/prehled-inzeratu/${item.id}/edit`} style={{ textDecoration: "none" }}>
+          <Button variant="light">Upravit</Button>
+        </Link>
+      </Group>
 
       <Card shadow="sm" padding="lg" withBorder>
 
