@@ -15,27 +15,53 @@ import {
   Alert,
 } from "@mantine/core";
 import Link from "next/link";
-import { redirect } from "@/i18n/navigation";
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 async function updateInzerat(formData: FormData) {
   "use server";
 
   const id = Number(formData.get("id"));
+  const zdarma = formData.get("zdarma") === "on";
+
+  const nazev = String(formData.get("nazev") || "").trim();
+  const popis = String(formData.get("popis") || "").trim();
+  const kategorie = String(formData.get("kategorie") || "").trim();
+  const stav = String(formData.get("stav") || "").trim();
+  const prodejce = String(formData.get("prodejce") || "").trim();
+  const email = String(formData.get("email") || "").trim();
+  const obrazek = String(formData.get("obrazek") || "").trim();
+
+  if (
+    !nazev ||
+    !popis ||
+    !kategorie ||
+    !stav ||
+    !prodejce ||
+    !email
+  ) {
+    return;
+  }
+
+  if (!email.includes("@")) {
+  return;
+  }
 
   await db
     .update(inzeraty)
     .set({
-      nazev: String(formData.get("nazev")),
-      popis: String(formData.get("popis")),
-      cena: Number(formData.get("cena")),
-      kategorie: String(formData.get("kategorie")),
-      stav: String(formData.get("stav")),
-      prodejce: String(formData.get("prodejce")),
-      email: String(formData.get("email")),
-      obrazek: String(formData.get("obrazek")),
+      nazev,
+      popis,
+      cena: zdarma ? 0 : Number(formData.get("cena")),
+      kategorie,
+      stav,
+      prodejce,
+      email,
+      obrazek,
     })
     .where(eq(inzeraty.id, id));
+
+
 
   revalidatePath(`/cs/prehled-inzeratu/${id}`);
   redirect(`/cs/prehled-inzeratu/${id}`);
@@ -63,7 +89,7 @@ export default async function Page({
     return <Alert color="red">Inzerát nenalezen</Alert>;
   }
 
-  const zdarma = FormData.get("zdarma") === "on";
+
 
   return (
     <Stack>
@@ -84,16 +110,19 @@ export default async function Page({
             <TextInput
               label="Název věci"
               defaultValue={inzerat.nazev}
+              name="nazev"
             />
 
             <Textarea
               label="Popis"
               defaultValue={inzerat.popis}
+              name="popis"
             />
 
             <NumberInput
               label="Cena"
               defaultValue={inzerat.cena}
+              name="cena"
             />
 
             <Select
@@ -108,6 +137,7 @@ export default async function Page({
                 "Dětské věci",
                 "Ostatní",
               ]}
+              name="kategorie"
             />
 
             <Select
@@ -118,20 +148,24 @@ export default async function Page({
                 "Rezervováno",
                 "Prodáno",
               ]}
+              name="stav"
             />
 
             <TextInput
               label="Jméno prodejce"
               defaultValue={inzerat.prodejce}
+              name="prodejce"
             />
 
             <TextInput
               label="Email"
               defaultValue={inzerat.email}
+              name="email"
             />
 
             <TextInput
               label="URL obrázku"
+              name="obrazek"
               // defaultValue={inzerat.obrazek}
             />
 
