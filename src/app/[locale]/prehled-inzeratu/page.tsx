@@ -1,5 +1,5 @@
 
-import { Card, Text, Title, Badge, Stack, Group, SimpleGrid, Button, TextInput } from "@mantine/core";
+import { Card, Text, Title, Badge, Stack, Group, SimpleGrid, Button, TextInput, Select, Checkbox } from "@mantine/core";
 import { db } from "@/db";
 import { inzeraty } from "@/db/schemas/inzeraty";
 import Link from "next/link";
@@ -9,17 +9,35 @@ import Link from "next/link";
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>;
+  searchParams: Promise<{ search?: string, kategorie?: string, stav?: string, zdarma?: string }>;
 })
 {
-  const { search } = await searchParams;
+  const { search, kategorie, stav, zdarma } = await searchParams;
   const data = await db.select().from(inzeraty);
 
-  const filtered = data.filter((item) =>
-  (item.nazev + item.popis)
-    .toLowerCase()
-    .includes((search || "").toLowerCase())
+const filtered = data.filter((item) => {
+
+  const matchesSearch =
+    (item.nazev + item.popis)
+      .toLowerCase()
+      .includes((search || "").toLowerCase());
+
+  const matchesKategorie =
+    !kategorie || item.kategorie === kategorie;
+
+  const matchesStav =
+    !stav || item.stav === stav;
+
+  const matchesZdarma =
+    zdarma !== "on" || item.cena === 0;
+
+  return (
+    matchesSearch &&
+    matchesKategorie &&
+    matchesStav &&
+    matchesZdarma
   );
+});
 
   return (
 
@@ -42,12 +60,62 @@ export default async function Page({
         </Link>
       </Group>
 
+      {/* filtre */}
       <form>
-        <TextInput
-          name="search"
-          placeholder="Hledat podle názvu nebo popisu..."
-          defaultValue={search}
-        />
+        <Stack>
+
+          <TextInput
+            name="search"
+            placeholder="Hledat podle názvu nebo popisu..."
+            defaultValue={search}
+          />
+
+          <Group align="end">
+
+            <Select
+              label="Kategorie"
+              name="kategorie"
+              placeholder="Všechny"
+              data={[
+                "Elektronika",
+                "Sport",
+                "Nábytek",
+                "Oblečení",
+                "Knihy",
+                "Dětské věci",
+                "Ostatní"
+              ]}
+              defaultValue={kategorie}
+              w={180}
+            />
+
+            <Select
+              label="Stav"
+              name="stav"
+              placeholder="Všechny"
+              data={[
+                "Dostupné",
+                "Rezervováno",
+                "Prodáno"
+              ]}
+              defaultValue={stav}
+              w={180}
+            />
+
+            <Checkbox
+              label="Pouze zdarma"
+              name="zdarma"
+              defaultChecked={zdarma === "on"}
+              mb={10}
+            />
+
+            <Button type="submit">
+              Filtrovat
+            </Button>
+
+          </Group>
+
+        </Stack>
       </form>
 
       <Title order={2}>inzeráty</Title>
