@@ -1,9 +1,12 @@
 
+
+
 import { Card, Text, Title, Badge, Stack, Group, SimpleGrid, Button, TextInput, Select, Checkbox } from "@mantine/core";
 import { db } from "@/db";
 import { inzeraty } from "@/db/schemas/inzeraty";
 import Link from "next/link";
-
+// import { useUser, SignInButton } from "@clerk/nextjs";
+import { AuthAddButton } from "@/components/AuthAddButton";
 
 
 export default async function Page({
@@ -31,6 +34,8 @@ const filtered = data.filter((item) => {
   const matchesZdarma =
     zdarma !== "on" || item.cena === 0;
 
+
+
   return (
     matchesSearch &&
     matchesKategorie &&
@@ -38,6 +43,8 @@ const filtered = data.filter((item) => {
     matchesZdarma
   );
 });
+
+  // const { isSignedIn } = useUser();
 
   return (
 
@@ -51,13 +58,21 @@ const filtered = data.filter((item) => {
           </Text>
         </div>
 
-        <Link href="/cs/prehled-inzeratu/novy"
-        style={{ textDecoration: "none" }}>
-
-          <Button variant="filled" color="blue">
-            Přidat položku
-          </Button>
-        </Link>
+         {/* {isSignedIn ? (
+          <Link
+            href="/cs/prehled-inzeratu/novy"
+            style={{ textDecoration: "none" }}
+          >
+            <Button>Přidat položku</Button>
+          </Link>
+        ) : (
+          <SignInButton mode="modal">
+            <Button variant="light">
+              Přihlásit se pro přidání
+            </Button>
+          </SignInButton>
+        )} */}
+        <AuthAddButton />
       </Group>
 
       {/* filtre */}

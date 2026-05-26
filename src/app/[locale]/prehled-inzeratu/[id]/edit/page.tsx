@@ -17,6 +17,9 @@ import {
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { auth } from "@clerk/nextjs/server";
+import { notFound } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
 
 async function updateInzerat(formData: FormData) {
   "use server";
@@ -43,7 +46,7 @@ async function updateInzerat(formData: FormData) {
     redirect(`/cs/prehled-inzeratu/${id}/edit?error=1`);
   }
 
-  if (!email.includes("@")) {
+  if (!email ||!email.includes("@")) {
   redirect(`/cs/prehled-inzeratu/${id}/edit?error=1`);
   }
 
@@ -77,6 +80,11 @@ export default async function Page({
 {
   const { id } = await params;
   const { error } = await searchParams;
+  const user = await currentUser();
+
+  //const isOwner = user?.id === inzerat.userId;
+  const isAdmin = (user?.publicMetadata as any)?.role === "admin";
+
 
   const inzeratId = Number(id);
 
@@ -93,7 +101,9 @@ export default async function Page({
     return <Alert color="red">Inzerát nenalezen</Alert>;
   }
 
-
+  if (!inzerat || (inzerat.userId !== user?.id && !isAdmin)) {
+    notFound();
+  }
 
   return (
     <Stack>
@@ -210,3 +220,4 @@ export default async function Page({
 
 
 
+// !email.includes("@") nefunguje

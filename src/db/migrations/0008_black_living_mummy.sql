@@ -1,0 +1,1 @@
+ALTER TABLE `inzeraty` ADD `userId` text NOT NULL;

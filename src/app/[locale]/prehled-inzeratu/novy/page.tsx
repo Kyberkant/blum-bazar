@@ -17,6 +17,8 @@ import Link from "next/link";
 import { db } from "@/db";
 import { inzeraty } from "@/db/schemas/inzeraty";
 import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
+
 
 
 export default function Page() {
@@ -26,6 +28,11 @@ export default function Page() {
     "use server";
 
     const zdarma = formData.get("zdarma") === "on";
+    const { userId } = await auth();
+
+      if (!userId) {
+        throw new Error("Nepřihlášený uživatel");
+      }
 
     await db.insert(inzeraty).values({
       nazev: String(formData.get("nazev")),
@@ -44,6 +51,8 @@ export default function Page() {
       email: String(formData.get("email")),
 
       obrazek: String(formData.get("obrazek") || ""),
+
+      userId: userId,
     });
 
     redirect("/cs/prehled-inzeratu");
