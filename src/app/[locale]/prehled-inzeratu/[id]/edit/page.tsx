@@ -82,7 +82,7 @@ export default async function Page({
   const { error } = await searchParams;
   const user = await currentUser();
 
-  //const isOwner = user?.id === inzerat.userId;
+
   const isAdmin = (user?.publicMetadata as any)?.role === "admin";
 
 
