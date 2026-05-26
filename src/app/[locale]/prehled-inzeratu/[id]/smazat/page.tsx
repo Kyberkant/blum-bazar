@@ -15,11 +15,22 @@ import {
 import Link from "next/link";
 
 import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
+import { notFound } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
 
 async function deleteInzerat(formData: FormData) {
   "use server";
 
   const id = Number(formData.get("id"));
+
+
+  const [item] = await db
+    .select()
+    .from(inzeraty)
+    .where(eq(inzeraty.id, id));
+
+
 
   await db
     .delete(inzeraty)
@@ -36,11 +47,16 @@ export default async function Page({
   const { id } = await params;
 
   const itemId = Number(id);
-
+  const { userId } = await auth();
   const [item] = await db
     .select()
     .from(inzeraty)
     .where(eq(inzeraty.id, itemId));
+
+  const user = await currentUser();
+
+
+  const isAdmin = (user?.publicMetadata as any)?.role === "admin";
 
   if (!item) {
     return (
@@ -48,6 +64,10 @@ export default async function Page({
         Inzerát nenalezen
       </Alert>
     );
+  }
+
+  if (!item || (item.userId !== user?.id && !isAdmin)) {
+    notFound();
   }
 
   return (

@@ -15,7 +15,7 @@ import {
 } from "@mantine/core";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
-
+import { currentUser } from "@clerk/nextjs/server";
 
 
 
@@ -41,8 +41,10 @@ export default async function Page({
     return <Alert color="red">Inzerát nenalezen</Alert>;
   }
 
-    const { userId } = await auth();
-    const isOwner = userId === item.userId;
+    const { userId, sessionClaims } = await auth();
+    const user = await currentUser();
+    const isOwner = user?.id === item.userId;
+    const isAdmin = (user?.publicMetadata as any)?.role === "admin";
 
 async function updateStav(formData: FormData) {
   "use server";
@@ -55,6 +57,8 @@ async function updateStav(formData: FormData) {
       stav: novyStav,
     })
     .where(eq(inzeraty.id, itemId));
+
+
 }
 
 
@@ -69,14 +73,14 @@ async function updateStav(formData: FormData) {
         </Link>
 
 
-        {isOwner && (
+        {(isOwner || isAdmin) && (
         <Link href={`/cs/prehled-inzeratu/${item.id}/edit`} style={{ textDecoration: "none" }}>
           <Button variant="light">Upravit</Button>
         </Link>
 
         )}
 
-        {isOwner && (
+        {(isOwner || isAdmin) && (
 
         <Link
           href={`/cs/prehled-inzeratu/${item.id}/smazat`}
