@@ -1,6 +1,18 @@
-import { clerkMiddleware } from '@clerk/nextjs/server';
 
-export default clerkMiddleware();
+
+import { clerkMiddleware } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+
+export default clerkMiddleware((auth, req) => {
+  const url = new URL(req.url);
+
+  // 🔥 redirect root → /cs
+  if (url.pathname === "/") {
+    return NextResponse.redirect(new URL("/cs", req.url));
+  }
+
+  return NextResponse.next();
+});
 
 export const config = {
   matcher: [
