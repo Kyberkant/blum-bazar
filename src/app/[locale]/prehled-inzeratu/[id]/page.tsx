@@ -14,7 +14,7 @@ import {
   Image
 } from "@mantine/core";
 import Link from "next/link";
-
+import { auth } from "@clerk/nextjs/server";
 
 
 
@@ -41,6 +41,8 @@ export default async function Page({
     return <Alert color="red">Inzerát nenalezen</Alert>;
   }
 
+    const { userId } = await auth();
+    const isOwner = userId === item.userId;
 
 async function updateStav(formData: FormData) {
   "use server";
@@ -66,9 +68,15 @@ async function updateStav(formData: FormData) {
           <Button variant="light">← Zpět na bazar</Button>
         </Link>
 
+
+        {isOwner && (
         <Link href={`/cs/prehled-inzeratu/${item.id}/edit`} style={{ textDecoration: "none" }}>
           <Button variant="light">Upravit</Button>
         </Link>
+
+        )}
+
+        {isOwner && (
 
         <Link
           href={`/cs/prehled-inzeratu/${item.id}/smazat`}
@@ -78,6 +86,7 @@ async function updateStav(formData: FormData) {
             Smazat inzerát
           </Button>
         </Link>
+        )}
       </Group>
 
       <Card shadow="sm" padding="lg" withBorder>
