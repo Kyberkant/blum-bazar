@@ -10,6 +10,7 @@ import {
   Card,
   Stack,
   Title,
+  FileInput
 } from "@mantine/core";
 
 import Link from "next/link";
@@ -19,7 +20,8 @@ import { inzeraty } from "@/db/schemas/inzeraty";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 
-
+import fs from "fs/promises";
+import path from "path";
 
 export default function Page() {
 
@@ -28,12 +30,40 @@ export default function Page() {
     "use server";
 
     const zdarma = formData.get("zdarma") === "on";
+
     const { userId } = await auth();
 
-      if (!userId) {
-        throw new Error("Nepřihlášený uživatel");
-      }
+    if (!userId) {
+      throw new Error("Nepřihlášený uživatel");
+    }
 
+    // URL fallback
+    const imageUrl = String(formData.get("obrazek") || "");
+
+    // uploaded file
+    const file = formData.get("obrazekFile") as File;
+
+    let imagePath = imageUrl;
+
+    // upload image
+    if (file && file.size > 0) {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const fileName = `${Date.now()}-${file.name}`;
+
+      const uploadPath = path.join(
+        process.cwd(),
+        "public/uploads",
+        fileName
+      );
+
+      await fs.writeFile(uploadPath, buffer);
+
+      imagePath = `/uploads/${fileName}`;
+    }
+
+    // DB insert
     await db.insert(inzeraty).values({
       nazev: String(formData.get("nazev")),
       popis: String(formData.get("popis")),
@@ -50,7 +80,7 @@ export default function Page() {
       prodejce: String(formData.get("prodejce")),
       email: String(formData.get("email")),
 
-      obrazek: String(formData.get("obrazek") || ""),
+      obrazek: imagePath,
 
       userId: userId,
     });
@@ -149,6 +179,14 @@ export default function Page() {
               label="URL obrázku"
               name="obrazek"
               placeholder="https://..."
+
+            />
+
+            <FileInput
+              label="Obrázek"
+              name="obrazekFile"
+              accept="image/png,image/jpeg,image/webp"
+              description="Pokud nahraješ obrázek i zadáš URL, použije se nahraný obrázek."
 
             />
 

@@ -18,7 +18,6 @@ import { auth } from "@clerk/nextjs/server";
 import { currentUser } from "@clerk/nextjs/server";
 
 
-
 export default async function Page({
   params,
 }: {
@@ -96,23 +95,34 @@ async function updateStav(formData: FormData) {
       <Card shadow="sm" padding="lg" withBorder>
 
         {/* FAKE IMAGE */}
-        <div
-          style={{
-            width: "100%",
-            height: 180,
-            backgroundColor: "#e9ecef",
-            borderRadius: 8,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#868e96",
-            fontSize: 14,
-            fontWeight: 500,
-            marginBottom: 16,
-          }}
-        >
-          Obrázek
-        </div>
+        {item.obrazek ? (
+          <Image
+            src={item.obrazek}
+            alt={item.nazev}
+            height={220}
+            radius="md"
+            fit="cover"
+            style={{ transition: "transform 0.2s" }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: 220,
+              backgroundColor: "#e9ecef",
+              borderRadius: 8,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#868e96",
+              fontSize: 14,
+              fontWeight: 500,
+              marginBottom: 16,
+            }}
+          >
+            Bez obrázku
+          </div>
+        )}
         <Stack>
           <Group justify="space-between">
             <Title order={2}>{item.nazev}</Title>

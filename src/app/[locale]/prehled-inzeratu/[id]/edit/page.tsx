@@ -13,13 +13,17 @@ import {
   Checkbox,
   Group,
   Alert,
+  FileInput
 } from "@mantine/core";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { auth } from "@clerk/nextjs/server";
+
 import { notFound } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";
+
+import fs from "fs/promises";
+import path from "path";
 
 async function updateInzerat(formData: FormData) {
   "use server";
@@ -34,6 +38,28 @@ async function updateInzerat(formData: FormData) {
   const prodejce = String(formData.get("prodejce") || "").trim();
   const email = String(formData.get("email") || "").trim();
   const obrazek = String(formData.get("obrazek") || "").trim();
+
+  const file = formData.get("obrazekFile") as File;
+
+  let imagePath = obrazek || String(formData.get("oldObrazek") || "");
+
+  // upload nového obrázku
+  if (file && file.size > 0) {
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const fileName = `${Date.now()}-${file.name}`;
+
+    const uploadPath = path.join(
+      process.cwd(),
+      "public/uploads",
+      fileName
+    );
+
+    await fs.writeFile(uploadPath, buffer);
+
+    imagePath = `/uploads/${fileName}`;
+  }
 
   if (
     !nazev ||
@@ -60,7 +86,7 @@ async function updateInzerat(formData: FormData) {
       stav,
       prodejce,
       email,
-      obrazek,
+      obrazek: imagePath,
     })
     .where(eq(inzeraty.id, id));
 
@@ -82,7 +108,7 @@ export default async function Page({
   const { error } = await searchParams;
   const user = await currentUser();
 
-  //const isOwner = user?.id === inzerat.userId;
+
   const isAdmin = (user?.publicMetadata as any)?.role === "admin";
 
 
@@ -186,8 +212,17 @@ export default async function Page({
             <TextInput
               label="URL obrázku"
               name="obrazek"
-              // defaultValue={inzerat.obrazek}
+             defaultValue={inzerat.obrazek || ""}
             />
+
+            <FileInput
+              label="Nahrát nový obrázek"
+              name="obrazekFile"
+              accept="image/png,image/jpeg,image/webp"
+              description="Pokud nahraješ obrázek i zadáš URL, použije se nahraný obrázek."
+            />
+
+
 
             <Checkbox
               label="Zdarma"
@@ -201,6 +236,12 @@ export default async function Page({
               </Button>
 
               <input type="hidden" name="id" value={inzerat.id} />
+
+              <input
+                type="hidden"
+                name="oldObrazek"
+                value={inzerat.obrazek || ""}
+              />
 
               <Link
                 href={`/cs/prehled-inzeratu/${inzerat.id}`}
