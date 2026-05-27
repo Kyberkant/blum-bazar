@@ -19,6 +19,8 @@ export const inzeraty = sqliteTable("inzeraty", {
   obrazek: text(),
 
   userId: text().notNull(),
+
+  iban: text("iban"),
 });
 
 export type Inzerat = typeof inzeraty.$inferSelect;

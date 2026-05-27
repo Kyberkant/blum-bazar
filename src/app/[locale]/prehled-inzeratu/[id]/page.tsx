@@ -138,6 +138,27 @@ async function updateStav(formData: FormData) {
               {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
             </Text>
 
+            {item.cena > 0 && item.iban && (
+              <Card withBorder mt="md" padding="md">
+                <Stack>
+                  <Title order={4}>QR platba</Title>
+
+                  <Alert color="blue">
+                    Toto je ukázková platba. Uživatelé si platbu řeší mezi sebou.
+                  </Alert>
+
+                  <Image
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                      `SPD*1.0*ACC:${item.iban}*AM:${item.cena}*CC:CZK`
+                    )}`}
+                    alt="QR platba"
+                    w={200}
+                    h={200}
+                  />
+                </Stack>
+              </Card>
+            )}
+
             <Badge
               color={
                 item.stav === "Dostupné"
