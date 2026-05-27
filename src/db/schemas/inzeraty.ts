@@ -20,7 +20,9 @@ export const inzeraty = sqliteTable("inzeraty", {
 
   userId: text().notNull(),
 
-  iban: text("iban"),
+  iban: text("iban").notNull(),
+
+  reservedBy: text("reservedBy"),
 });
 
 export type Inzerat = typeof inzeraty.$inferSelect;

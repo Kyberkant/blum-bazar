@@ -71,6 +71,13 @@
       "when": 1779867617950,
       "tag": "0009_small_hex",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1779873642446,
+      "tag": "0010_blushing_baron_zemo",
+      "breakpoints": true
     }
   ]
 }
