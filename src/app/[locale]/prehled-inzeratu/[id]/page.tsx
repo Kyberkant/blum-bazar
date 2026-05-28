@@ -300,7 +300,7 @@ async function payAction(formData: FormData) {
               </Group>
             )}
 
-            {isBlocked && (
+            { (isAdmin || isBlocked) && (
               <Alert color="yellow">
                 Inzerát je rezervovaný jiným uživatelem
               </Alert>
