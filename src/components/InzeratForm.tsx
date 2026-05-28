@@ -42,15 +42,17 @@ export default function InzeratForm() {
                   label="Cena"
                   name="cena"
                   placeholder="5000"
-                  disabled={false}
+                  disabled={zdarma}
                   min={0}
+
                 />
 
                 <Checkbox
                   label="Zdarma"
                   name="zdarma"
                   description="Pokud je inzerát zdarma, cena bude automaticky 0"
-
+                  checked={zdarma}
+                  onChange={(event) => setZdarma(event.currentTarget.checked)}
                 />
 
                 <TextInput
