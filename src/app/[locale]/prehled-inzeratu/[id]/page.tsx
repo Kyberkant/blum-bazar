@@ -51,7 +51,7 @@ export default async function Page({
     const isReservedByMe = item.reservedBy === userId;
     const isSignedIn = !!userId;
 
-    const isBlocked = item.reservedBy && item.reservedBy !== userId && !isAdmin;
+    const isBlocked = item.stav === "Rezervováno" && !isReservedByMe && !isAdmin;
     const canView = !isBlocked;
 
 
@@ -68,7 +68,7 @@ async function updateStav(formData: FormData) {
     })
     .where(eq(inzeraty.id, itemId));
 
-
+    revalidatePath(`/cs/prehled-inzeratu/${itemId}`);
   }
 
   async function reserveAction(formData: FormData) {
@@ -88,7 +88,7 @@ async function updateStav(formData: FormData) {
       revalidatePath(`/cs/prehled-inzeratu/${itemId}`);
   }
 
- async function cancelReservation() {
+ async function cancelReservation(formData: FormData) {
   "use server";
 
   const { userId } = await auth();
@@ -103,7 +103,7 @@ async function updateStav(formData: FormData) {
       revalidatePath(`/cs/prehled-inzeratu/${itemId}`);
   }
 
-async function payAction() {
+async function payAction(formData: FormData) {
   "use server";
 
   const { userId } = await auth();
@@ -218,6 +218,27 @@ async function payAction() {
 
                   )}
 
+                  {item.stav === "Platba" && isReservedByMe && (
+                    <form
+                      action={async () => {
+                        "use server";
+
+                        await db.update(inzeraty)
+                          .set({
+                            stav: "Prodáno",
+                            reservedBy: null,
+                          })
+                          .where(eq(inzeraty.id, itemId));
+
+                        revalidatePath(`/cs/prehled-inzeratu/${itemId}`);
+                      }}
+                    >
+                      <Button type="submit" color="green">
+                        Potvrdit zaplacení
+                      </Button>
+                    </form>
+                  )}
+
 
                 </Stack>
               </Card>
@@ -231,6 +252,8 @@ async function payAction() {
                   ? "yellow"
                   : item.stav === "Prodáno"
                   ? "red"
+                  : item.stav === "Platba"
+                  ? "blue"
                   : "gray"
               }
             >
@@ -268,11 +291,11 @@ async function payAction() {
             {item.stav === "Rezervováno" && isReservedByMe && (
               <Group>
                 <form action={cancelReservation}>
-                  <Button color="gray">Zrušit rezervaci</Button>
+                  <Button type="submit" color="gray">Zrušit rezervaci</Button>
                 </form>
 
                 <form action={payAction}>
-                  <Button color="blue">Zaplatit</Button>
+                  <Button type="submit" color="blue">Zaplatit</Button>
                 </form>
               </Group>
             )}
