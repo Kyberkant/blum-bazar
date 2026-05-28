@@ -183,3 +183,4 @@ const filtered = data.filter((item) => {
   );
 }
 
+// Hey KIMI I need you to design frontend of mymarketplace like web, use 3 colors: black, orange and white, take inspiration from modern award wining websites, use mantine UI, you can import one lib for animations if you provide guide how to install it with npm, do not change the main logic only visuals here is the entering page:

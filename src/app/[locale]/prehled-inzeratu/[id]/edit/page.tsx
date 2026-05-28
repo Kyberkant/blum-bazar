@@ -25,6 +25,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import fs from "fs/promises";
 import path from "path";
 
+import InzeratForm from "@/components/InzeratForm";
+
 async function updateInzerat(formData: FormData) {
   "use server";
 
@@ -150,90 +152,8 @@ export default async function Page({
       {/* FORM */}
       <Card shadow="sm" padding="lg" withBorder maw={600}>
         <form action={updateInzerat}>
-          <Stack>
-            <Title order={2}>Upravit inzerát</Title>
+          <InzeratForm  inzerat={inzerat}/>
 
-            <TextInput
-              label="Název věci"
-              defaultValue={inzerat.nazev}
-              name="nazev"
-            />
-
-            <Textarea
-              label="Popis"
-              defaultValue={inzerat.popis}
-              name="popis"
-            />
-
-            <NumberInput
-              label="Cena"
-              defaultValue={inzerat.cena}
-              name="cena"
-            />
-
-            <Select
-              label="Kategorie"
-              defaultValue={inzerat.kategorie}
-              data={[
-                "Elektronika",
-                "Sport",
-                "Nábytek",
-                "Oblečení",
-                "Knihy",
-                "Dětské věci",
-                "Ostatní",
-              ]}
-              name="kategorie"
-            />
-
-            <Select
-              label="Stav"
-              defaultValue={inzerat.stav}
-              data={[
-                "Dostupné",
-                "Rezervováno",
-                "Prodáno",
-              ]}
-              name="stav"
-            />
-
-            <TextInput
-              label="Jméno prodejce"
-              defaultValue={inzerat.prodejce}
-              name="prodejce"
-            />
-
-            <TextInput
-              label="Email"
-              defaultValue={inzerat.email}
-              name="email"
-            />
-
-            <TextInput
-              label="URL obrázku"
-              name="obrazek"
-             defaultValue={inzerat.obrazek || ""}
-            />
-
-            <FileInput
-              label="Nahrát nový obrázek"
-              name="obrazekFile"
-              accept="image/png,image/jpeg,image/webp"
-              description="Pokud nahraješ obrázek i zadáš URL, použije se nahraný obrázek."
-            />
-
-
-
-            <Checkbox
-              label="Zdarma"
-              defaultChecked={inzerat.cena === 0}
-            />
-
-            <Group>
-              <Button type="submit" color="green">
-                Uložit změny
-
-              </Button>
 
               <input type="hidden" name="id" value={inzerat.id} />
 
@@ -243,16 +163,6 @@ export default async function Page({
                 value={inzerat.obrazek || ""}
               />
 
-              <Link
-                href={`/cs/prehled-inzeratu/${inzerat.id}`}
-                style={{ textDecoration: "none" }}
-              >
-                <Button variant="light">
-                  Zrušit
-                </Button>
-              </Link>
-            </Group>
-          </Stack>
         </form>
       </Card>
     </Stack>
