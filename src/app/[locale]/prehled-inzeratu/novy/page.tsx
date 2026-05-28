@@ -1,16 +1,8 @@
 
-
 import {
-  TextInput,
-  Textarea,
-  NumberInput,
-  Select,
-  Checkbox,
   Button,
   Card,
   Stack,
-  Title,
-  FileInput
 } from "@mantine/core";
 
 import Link from "next/link";
@@ -114,4 +106,3 @@ export default function Page() {
   );
 }
 
-// TODO zablokovat cenu když je zaškrtnuto zdarma
