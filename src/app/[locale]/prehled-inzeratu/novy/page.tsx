@@ -83,7 +83,11 @@ export default function Page() {
       obrazek: imagePath,
 
       userId: userId,
+
+      iban: String(formData.get("iban") || ""),
     });
+
+
 
     redirect("/cs/prehled-inzeratu");
   }
@@ -133,6 +137,12 @@ export default function Page() {
               name="zdarma"
               description="Pokud je inzerát zdarma, cena bude automaticky 0"
 
+            />
+
+            <TextInput
+              label="Účet pro platbu"
+              name="iban"
+              placeholder="123456789/0800"
             />
 
             <Select

@@ -16,6 +16,8 @@ import {
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { currentUser } from "@clerk/nextjs/server";
+import { notFound } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 
 export default async function Page({
@@ -40,10 +42,18 @@ export default async function Page({
     return <Alert color="red">Inzerát nenalezen</Alert>;
   }
 
+
+
     const { userId, sessionClaims } = await auth();
     const user = await currentUser();
     const isOwner = user?.id === item.userId;
     const isAdmin = (user?.publicMetadata as any)?.role === "admin";
+    const isReservedByMe = item.reservedBy === userId;
+    const isSignedIn = !!userId;
+
+    const isBlocked = item.stav === "Rezervováno" && !isReservedByMe && !isAdmin;
+    const canView = !isBlocked;
+
 
 async function updateStav(formData: FormData) {
   "use server";
@@ -54,10 +64,58 @@ async function updateStav(formData: FormData) {
     .update(inzeraty)
     .set({
       stav: novyStav,
+      reservedBy: novyStav === "Rezervováno" ? user?.id || null : null,
     })
     .where(eq(inzeraty.id, itemId));
 
+    revalidatePath(`/cs/prehled-inzeratu/${itemId}`);
+  }
 
+  async function reserveAction(formData: FormData) {
+    "use server";
+
+    const { userId } = await auth();
+
+    if (!userId) return;
+
+    await db.update(inzeraty)
+      .set({
+        stav: "Rezervováno",
+        reservedBy: userId,
+      })
+      .where(eq(inzeraty.id, itemId));
+
+      revalidatePath(`/cs/prehled-inzeratu/${itemId}`);
+  }
+
+ async function cancelReservation(formData: FormData) {
+  "use server";
+
+  const { userId } = await auth();
+
+    await db.update(inzeraty)
+      .set({
+        stav: "Dostupné",
+        reservedBy: null,
+      })
+      .where(eq(inzeraty.id, itemId));
+
+      revalidatePath(`/cs/prehled-inzeratu/${itemId}`);
+  }
+
+async function payAction(formData: FormData) {
+  "use server";
+
+  const { userId } = await auth();
+
+  await db.update(inzeraty)
+    .set({
+      stav: "Platba",
+      reservedBy: userId
+    })
+    .where(eq(inzeraty.id, itemId));
+
+    revalidatePath(`/cs/prehled-inzeratu/${itemId}`);
 }
 
 
@@ -138,6 +196,54 @@ async function updateStav(formData: FormData) {
               {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
             </Text>
 
+            {item.cena > 0 && item.iban && (
+              <Card withBorder mt="md" padding="md">
+                <Stack>
+                  <Title order={4}>QR platba</Title>
+
+                  <Alert color="blue">
+                    Toto je ukázková platba. Uživatelé si platbu řeší mezi sebou.
+                  </Alert>
+
+                  {item.stav === "Platba" && isReservedByMe && item.iban && (
+
+                    <Image
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                        `SPD*1.0*ACC:${item.iban}*AM:${item.cena}*CC:CZK`
+                      )}`}
+                      alt="QR platba"
+                      w={200}
+                      h={200}
+                      />
+
+                  )}
+
+                  {item.stav === "Platba" && isReservedByMe && (
+                    <form
+                      action={async () => {
+                        "use server";
+
+                        await db.update(inzeraty)
+                          .set({
+                            stav: "Prodáno",
+                            reservedBy: null,
+                          })
+                          .where(eq(inzeraty.id, itemId));
+
+                        revalidatePath(`/cs/prehled-inzeratu/${itemId}`);
+                      }}
+                    >
+                      <Button type="submit" color="green">
+                        Potvrdit zaplacení
+                      </Button>
+                    </form>
+                  )}
+
+
+                </Stack>
+              </Card>
+            )}
+
             <Badge
               color={
                 item.stav === "Dostupné"
@@ -146,6 +252,8 @@ async function updateStav(formData: FormData) {
                   ? "yellow"
                   : item.stav === "Prodáno"
                   ? "red"
+                  : item.stav === "Platba"
+                  ? "blue"
                   : "gray"
               }
             >
@@ -170,41 +278,33 @@ async function updateStav(formData: FormData) {
           <Text c="dimmed" size="sm">
             Stav: {item.stav}
           </Text>
-            <form action={updateStav}>
+
+
+            {item.stav === "Dostupné" && isSignedIn && (
+              <form action={reserveAction}>
+                <Button type="submit" color="green">
+                  Rezervovat
+                </Button>
+              </form>
+            )}
+
+            {item.stav === "Rezervováno" && isReservedByMe && (
               <Group>
+                <form action={cancelReservation}>
+                  <Button type="submit" color="gray">Zrušit rezervaci</Button>
+                </form>
 
-                <Button
-                  type="submit"
-                  name="stav"
-                  value="Dostupné"
-                  color="green"
-                  variant="light"
-                >
-                  Dostupné
-                </Button>
-
-                <Button
-                  type="submit"
-                  name="stav"
-                  value="Rezervováno"
-                  color="yellow"
-                  variant="light"
-                >
-                  Rezervováno
-                </Button>
-
-                <Button
-                  type="submit"
-                  name="stav"
-                  value="Prodáno"
-                  color="red"
-                  variant="light"
-                >
-                  Prodáno
-                </Button>
-
+                <form action={payAction}>
+                  <Button type="submit" color="blue">Zaplatit</Button>
+                </form>
               </Group>
-            </form>
+            )}
+
+            {isBlocked && (
+              <Alert color="yellow">
+                Inzerát je rezervovaný jiným uživatelem
+              </Alert>
+            )}
         </Stack>
       </Card>
     </Stack>
