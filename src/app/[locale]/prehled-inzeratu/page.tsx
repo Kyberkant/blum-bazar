@@ -1,7 +1,7 @@
 
 
 
-import { Card, Text, Title, Badge, Stack, Group, SimpleGrid, Button, TextInput, Select, Checkbox } from "@mantine/core";
+import { Card, Text, Title, Badge, Stack, Group, SimpleGrid, Button, TextInput, Select, Checkbox, Paper, Box } from "@mantine/core";
 import { db } from "@/db";
 import { inzeraty } from "@/db/schemas/inzeraty";
 import Link from "next/link";
@@ -44,45 +44,108 @@ const filtered = data.filter((item) => {
   );
 });
 
-  // const { isSignedIn } = useUser();
 
   return (
+  <Stack gap={40}>
 
-    <Stack gap="md">
+    {/* HERO */}
+    <Paper
+      radius={32}
+      p={40}
+      style={{
+        background: "white",
+        border: "1px solid rgba(0,0,0,0.06)",
+        boxShadow: "0 20px 60px rgba(0,0,0,0.06)",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* glow */}
+      <Box
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: `
+            radial-gradient(
+              circle at top right,
+              rgba(255,106,0,0.14),
+              transparent 35%
+            )
+          `,
+          pointerEvents: "none",
+        }}
+      />
 
-      <Group justify="space-between" align="flex-start">
-        <div>
-          <Title order={2}>Bazar</Title>
-          <Text c="dimmed" size="sm">
-            Prohlížej si inzeráty ostatních uživatelů nebo najdi něco, co se ti hodí.
-          </Text>
-        </div>
+      <Group justify="space-between" align="center">
 
-         {/* {isSignedIn ? (
-          <Link
-            href="/cs/prehled-inzeratu/novy"
-            style={{ textDecoration: "none" }}
+        <Stack gap={6}>
+          <Badge
+            variant="light"
+            color="orange"
+            radius="xl"
+            w="fit-content"
+            px={14}
+            py={8}
+            tt="uppercase"
           >
-            <Button>Přidat položku</Button>
-          </Link>
-        ) : (
-          <SignInButton mode="modal">
-            <Button variant="light">
-              Přihlásit se pro přidání
-            </Button>
-          </SignInButton>
-        )} */}
+            Blogic Marketplace
+          </Badge>
+
+          <Title
+            order={1}
+            style={{
+              fontSize: "clamp(36px, 6vw, 62px)",
+              lineHeight: 1,
+              letterSpacing: "-0.04em",
+              color: "#111",
+              fontWeight: 900,
+            }}
+          >
+            Bazar
+          </Title>
+
+          <Text
+            c="dimmed"
+            maw={560}
+            size="lg"
+            style={{ lineHeight: 1.7 }}
+          >
+            Prohlížej si moderní marketplace s rezervacemi,
+            QR platbami a správou inzerátů.
+          </Text>
+        </Stack>
+
         <AuthAddButton />
       </Group>
+    </Paper>
 
-      {/* filtre */}
+    {/* FILTERS */}
+    <Paper
+      radius={28}
+      p={28}
+      style={{
+        background: "white",
+        border: "1px solid rgba(0,0,0,0.06)",
+        boxShadow: "0 10px 40px rgba(0,0,0,0.05)",
+      }}
+    >
       <form>
-        <Stack>
+        <Stack gap="lg">
 
           <TextInput
             name="search"
             placeholder="Hledat podle názvu nebo popisu..."
             defaultValue={search}
+            radius="xl"
+            size="md"
+            styles={{
+              input: {
+                border: "1px solid rgba(0,0,0,0.08)",
+                background: "#fafafa",
+                height: 52,
+                fontSize: 16,
+              },
+            }}
           />
 
           <Group align="end">
@@ -101,7 +164,8 @@ const filtered = data.filter((item) => {
                 "Ostatní"
               ]}
               defaultValue={kategorie}
-              w={180}
+              w={220}
+              radius="xl"
             />
 
             <Select
@@ -111,20 +175,32 @@ const filtered = data.filter((item) => {
               data={[
                 "Dostupné",
                 "Rezervováno",
-                "Prodáno"
+                "Prodáno",
+                "Platba",
               ]}
               defaultValue={stav}
-              w={180}
+              w={220}
+              radius="xl"
             />
 
             <Checkbox
               label="Pouze zdarma"
               name="zdarma"
               defaultChecked={zdarma === "on"}
-              mb={10}
+              mb={12}
+              color="orange"
             />
 
-            <Button type="submit">
+            <Button
+              type="submit"
+              radius="xl"
+              size="md"
+              style={{
+                background: "#ff6a00",
+                fontWeight: 700,
+                boxShadow: "0 10px 25px rgba(255,106,0,0.25)",
+              }}
+            >
               Filtrovat
             </Button>
 
@@ -132,55 +208,154 @@ const filtered = data.filter((item) => {
 
         </Stack>
       </form>
+    </Paper>
 
-      <Title order={2}>inzeráty</Title>
+    {/* SECTION HEADER */}
+    <Group justify="space-between">
+      <Stack gap={0}>
+        <Title
+          order={2}
+          style={{
+            fontSize: 34,
+            fontWeight: 900,
+            letterSpacing: "-0.03em",
+          }}
+        >
+          Inzeráty
+        </Title>
 
-      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
-        {filtered.map((item) => (
-          <Link
-            key={item.id}
-            href={`/cs/prehled-inzeratu/${item.id}`}
-            style={{ textDecoration: "none" }}
+        <Text c="dimmed">
+          {filtered.length} nalezených položek
+        </Text>
+      </Stack>
+    </Group>
+
+    {/* GRID */}
+    <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
+
+      {filtered.map((item) => (
+        <Link
+          key={item.id}
+          href={`/cs/prehled-inzeratu/${item.id}`}
+          style={{ textDecoration: "none" }}
+        >
+          <Card
+            radius={28}
+            p={24}
+            style={{
+              cursor: "pointer",
+              background: "white",
+              border: "1px solid rgba(0,0,0,0.06)",
+              boxShadow: "0 12px 40px rgba(0,0,0,0.06)",
+              transition: "all 0.22s ease",
+            }}
           >
-            <Card shadow="sm" padding="md" withBorder style={{ cursor: "pointer"}}>
 
-              <Stack>
-                <Group justify="space-between">
-                  <Text fw={600}>{item.nazev}</Text>
-                  <Badge color="blue">{item.kategorie}</Badge>
-                </Group>
+            <Stack gap="lg">
 
-                <Text size="sm">{item.popis}</Text>
-
-                <Group justify="space-between">
-                  <Text fw={700}>
-                    {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
+              {/* fake image */}
+              <Box
+                style={{
+                  height: 200,
+                  borderRadius: 22,
+                  background: item.obrazek
+                    ? `url(${item.obrazek}) center/cover`
+                    : "linear-gradient(135deg,#f5f5f5,#ececec)",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                {!item.obrazek && (
+                  <Text
+                    size="sm"
+                    c="dimmed"
+                    ta="center"
+                    mt={90}
+                  >
+                    Bez obrázku
                   </Text>
+                )}
+              </Box>
 
+              <Stack gap={8}>
+
+                <Group justify="space-between" align="flex-start">
+
+                  <Stack gap={2}>
+                    <Text
+                      fw={800}
+                      size="lg"
+                      style={{
+                        lineHeight: 1.2,
+                        color: "#111",
+                      }}
+                    >
+                      {item.nazev}
+                    </Text>
+
+                    <Text
+                      size="sm"
+                      c="dimmed"
+                      lineClamp={2}
+                    >
+                      {item.popis}
+                    </Text>
+                  </Stack>
 
                   <Badge
+                    radius="xl"
+                    color="orange"
+                    variant="light"
+                  >
+                    {item.kategorie}
+                  </Badge>
+                </Group>
+
+                <Group justify="space-between" mt={8}>
+
+                  <Text
+                    fw={900}
+                    size="xl"
+                    style={{
+                      color: "#111",
+                      letterSpacing: "-0.03em",
+                    }}
+                  >
+                    {item.cena === 0
+                      ? "Zdarma"
+                      : `${item.cena} Kč`}
+                  </Text>
+
+                  <Badge
+                    radius="xl"
+                    size="lg"
                     color={
                       item.stav === "Dostupné"
                         ? "green"
                         : item.stav === "Rezervováno"
                         ? "yellow"
+                        : item.stav === "Platba"
+                        ? "blue"
                         : "red"
                     }
                     variant="light"
-                    size="sm"
                   >
                     {item.stav}
                   </Badge>
+
                 </Group>
 
               </Stack>
-            </Card>
-          </Link>
-        ))}
-      </SimpleGrid>
 
-    </Stack>
-  );
+            </Stack>
+          </Card>
+        </Link>
+      ))}
+
+    </SimpleGrid>
+
+  </Stack>
+);
 }
 
 // Hey KIMI I need you to design frontend of mymarketplace like web, use 3 colors: black, orange and white, take inspiration from modern award wining websites, use mantine UI, you can import one lib for animations if you provide guide how to install it with npm, do not change the main logic only visuals here is the entering page:

@@ -89,13 +89,22 @@ export default function Page() {
     <Stack>
 
       <Link
-        href="/cs/prehled-inzeratu"
-        style={{ textDecoration: "none" }}
-      >
-        <Button variant="light" w="fit-content">
-          ← Zpět na bazar
-        </Button>
-      </Link>
+          href="/cs/prehled-inzeratu"
+          style={{ textDecoration: "none" }}
+        >
+          <Button
+            variant="subtle"
+            radius="xl"
+            leftSection={<span style={{ fontSize: 16 }}>←</span>}
+            style={{
+              color: "#000",
+              fontWeight: 600,
+              transition: "all 0.2s ease",
+            }}
+          >
+            Zpět na bazar
+          </Button>
+        </Link>
 
       <Card shadow="sm" padding="lg" withBorder maw={500}>
         <form action={createInzerat}>

@@ -10,6 +10,7 @@ import {
   Button,
   Group,
   Alert,
+  Divider,
 } from "@mantine/core";
 
 import Link from "next/link";
@@ -70,53 +71,68 @@ export default async function Page({
     notFound();
   }
 
-  return (
-    <Stack maw={500}>
-      <Card withBorder padding="lg">
-        <Stack>
+return (
+    <Stack align="center" mt={60}>
+      <Card
+        withBorder
+        shadow="sm"
+        radius="md"
+        maw={520}
+        w="100%"
+        style={{
+          borderLeft: "4px solid #ff6b00",
+        }}
+      >
+        <Stack gap="md">
+          {/* HEADER */}
+          <Group justify="space-between">
+            <Title order={2}>Smazání inzerátu</Title>
+          </Group>
 
-          <Title order={2}>
-            Smazat inzerát
-          </Title>
+          <Divider />
 
-          <Alert color="red" title="Varování">
-            Tato akce je nevratná.
+          {/* WARNING */}
+          <Alert color="orange" title="Pozor">
+            Tato akce je nevratná. Inzerát bude trvale odstraněn.
           </Alert>
 
-          <Text>
-            Opravdu chceš smazat:
-          </Text>
+          {/* ITEM INFO */}
+          <Stack gap={4}>
+            <Text size="sm" c="dimmed">
+              Opravdu chceš smazat tento inzerát?
+            </Text>
 
-          <Text fw={700}>
-            {item.nazev}
-          </Text>
+            <Text fw={700} size="lg">
+              {item.nazev}
+            </Text>
+          </Stack>
 
-          <Group>
+          <Divider />
 
-            <form action={deleteInzerat}>
-              <input
-                type="hidden"
-                name="id"
-                value={item.id}
-              />
-
-              <Button
-                type="submit"
-                color="red"
-              >
-                Ano, smazat
-              </Button>
-            </form>
-
+          {/* ACTIONS */}
+          <Group justify="space-between">
             <Link
               href={`/cs/prehled-inzeratu/${item.id}`}
               style={{ textDecoration: "none" }}
             >
-              <Button variant="light">
+              <Button variant="light" color="gray">
                 Zrušit
               </Button>
             </Link>
 
+            <form action={deleteInzerat}>
+              <input type="hidden" name="id" value={item.id} />
+
+              <Button
+                type="submit"
+                color="orange"
+                style={{
+                  backgroundColor: "#ff6b00",
+                }}
+              >
+                Ano, smazat
+              </Button>
+            </form>
           </Group>
         </Stack>
       </Card>

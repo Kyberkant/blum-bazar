@@ -16,7 +16,6 @@ import {
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { currentUser } from "@clerk/nextjs/server";
-import { notFound } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 
@@ -52,7 +51,6 @@ export default async function Page({
     const isSignedIn = !!userId;
 
     const isBlocked = item.stav === "Rezervováno" && !isReservedByMe && !isAdmin;
-    const canView = !isBlocked;
 
 
 async function updateStav(formData: FormData) {
@@ -119,194 +117,300 @@ async function payAction(formData: FormData) {
 }
 
 
-
   return (
-    <Stack>
+  <Stack gap={40}>
 
-      <Group justify="space-between" align="flex-start">
+    {/* TOP NAV */}
+    <Group
+      justify="space-between"
+      align="center"
+      style={{
+        padding: "12px 16px",
+        border: "1px solid rgba(0,0,0,0.06)",
+        borderRadius: 999,
+        background: "white",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
+      }}
+    >
+      {/* BACK */}
+      <Link href="/cs/prehled-inzeratu" style={{ textDecoration: "none" }}>
+        <Button
+          variant="subtle"
+          radius="xl"
+          style={{
+            fontWeight: 600,
+            color: "#000",
+          }}
+          leftSection={<span>←</span>}
+        >
+          Zpět
+        </Button>
+      </Link>
 
-        <Link href="/cs/prehled-inzeratu" style={{ textDecoration: "none" }}>
-          <Button variant="light">← Zpět na bazar</Button>
-        </Link>
-
-
+      {/* ACTIONS */}
+      <Group>
         {(isOwner || isAdmin) && (
-        <Link href={`/cs/prehled-inzeratu/${item.id}/edit`} style={{ textDecoration: "none" }}>
-          <Button variant="light">Upravit</Button>
-        </Link>
-
+          <Link
+            href={`/cs/prehled-inzeratu/${item.id}/edit`}
+            style={{ textDecoration: "none" }}
+          >
+            <Button
+              variant="subtle"
+              radius="xl"
+              style={{
+                fontWeight: 600,
+                color: "#000",
+              }}
+            >
+              Upravit
+            </Button>
+          </Link>
         )}
 
         {(isOwner || isAdmin) && (
-
-        <Link
-          href={`/cs/prehled-inzeratu/${item.id}/smazat`}
-          style={{ textDecoration: "none" }}
-        >
-          <Button color="red" variant="light">
-            Smazat inzerát
-          </Button>
-        </Link>
+          <Link
+            href={`/cs/prehled-inzeratu/${item.id}/smazat`}
+            style={{ textDecoration: "none" }}
+          >
+            <Button
+              radius="xl"
+              style={{
+                background: "#ff4d4f",
+                color: "white",
+                fontWeight: 700,
+                boxShadow: "0 10px 25px rgba(255,77,79,0.25)",
+              }}
+            >
+              Smazat
+            </Button>
+          </Link>
         )}
       </Group>
+    </Group>
 
-      <Card shadow="sm" padding="lg" withBorder>
+    {/* MAIN CARD */}
+    <Card
+      radius={32}
+      p={0}
+      style={{
+        border: "1px solid rgba(0,0,0,0.06)",
+        boxShadow: "0 25px 80px rgba(0,0,0,0.08)",
+        overflow: "hidden",
+        background: "white",
+      }}
+    >
 
-        {/* FAKE IMAGE */}
-        {item.obrazek ? (
-          <Image
-            src={item.obrazek}
-            alt={item.nazev}
-            height={220}
-            radius="md"
-            fit="cover"
-            style={{ transition: "transform 0.2s" }}
-          />
-        ) : (
-          <div
+      {/* IMAGE SECTION */}
+      {item.obrazek ? (
+        <Image
+          src={item.obrazek}
+          alt={item.nazev}
+          height={360}
+          fit="cover"
+        />
+      ) : (
+        <div
+          style={{
+            width: "100%",
+            height: 360,
+            background: "linear-gradient(135deg,#f5f5f5,#e9e9e9)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#888",
+          }}
+        >
+          Bez obrázku
+        </div>
+      )}
+
+      {/* CONTENT */}
+      <Stack p={28} gap={22}>
+
+        {/* TITLE ROW */}
+        <Group justify="space-between" align="flex-start">
+          <Stack gap={4}>
+            <Title
+              order={1}
+              style={{
+                fontSize: 34,
+                fontWeight: 900,
+                letterSpacing: "-0.03em",
+              }}
+            >
+              {item.nazev}
+            </Title>
+
+            <Text c="dimmed">{item.popis}</Text>
+          </Stack>
+
+          <Badge
+            size="lg"
+            radius="xl"
+            color="orange"
+            variant="light"
+          >
+            {item.kategorie}
+          </Badge>
+        </Group>
+
+        {/* PRICE + STATUS */}
+        <Group justify="space-between" align="center">
+
+          <Text
+            size="xl"
+            fw={900}
             style={{
-              width: "100%",
-              height: 220,
-              backgroundColor: "#e9ecef",
-              borderRadius: 8,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#868e96",
-              fontSize: 14,
-              fontWeight: 500,
-              marginBottom: 16,
+              fontSize: 28,
+              letterSpacing: "-0.03em",
             }}
           >
-            Bez obrázku
-          </div>
-        )}
-        <Stack>
-          <Group justify="space-between">
-            <Title order={2}>{item.nazev}</Title>
-            <Badge>{item.kategorie}</Badge>
-          </Group>
-
-          <Divider />
-
-          <Text size="md">{item.popis}</Text>
-
-          <Group justify="space-between">
-            <Text fw={700} size="lg">
-              {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
-            </Text>
-
-            {item.cena > 0 && item.iban && (
-              <Card withBorder mt="md" padding="md">
-                <Stack>
-                  <Title order={4}>QR platba</Title>
-
-                  <Alert color="blue">
-                    Toto je ukázková platba. Uživatelé si platbu řeší mezi sebou.
-                  </Alert>
-
-                  {item.stav === "Platba" && isReservedByMe && item.iban && (
-
-                    <Image
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-                        `SPD*1.0*ACC:${item.iban}*AM:${item.cena}*CC:CZK`
-                      )}`}
-                      alt="QR platba"
-                      w={200}
-                      h={200}
-                      />
-
-                  )}
-
-                  {item.stav === "Platba" && isReservedByMe && (
-                    <form
-                      action={async () => {
-                        "use server";
-
-                        await db.update(inzeraty)
-                          .set({
-                            stav: "Prodáno",
-                            reservedBy: null,
-                          })
-                          .where(eq(inzeraty.id, itemId));
-
-                        revalidatePath(`/cs/prehled-inzeratu/${itemId}`);
-                      }}
-                    >
-                      <Button type="submit" color="green">
-                        Potvrdit zaplacení
-                      </Button>
-                    </form>
-                  )}
-
-
-                </Stack>
-              </Card>
-            )}
-
-            <Badge
-              color={
-                item.stav === "Dostupné"
-                  ? "green"
-                  : item.stav === "Rezervováno"
-                  ? "yellow"
-                  : item.stav === "Prodáno"
-                  ? "red"
-                  : item.stav === "Platba"
-                  ? "blue"
-                  : "gray"
-              }
-            >
-              {item.stav}
-            </Badge>
-          </Group>
-
-          <Divider />
-
-          <Alert title="Kontakt">
-            <Stack gap={4}>
-                <Text>
-                  Prodejce: {item.prodejce}
-                </Text>
-
-                <Text>
-                  Email: {item.email}
-                </Text>
-              </Stack>
-          </Alert>
-
-          <Text c="dimmed" size="sm">
-            Stav: {item.stav}
+            {item.cena === 0 ? "Zdarma" : `${item.cena} Kč`}
           </Text>
 
+          <Badge
+            size="lg"
+            radius="xl"
+            color={
+              item.stav === "Dostupné"
+                ? "green"
+                : item.stav === "Rezervováno"
+                ? "yellow"
+                : item.stav === "Platba"
+                ? "blue"
+                : "red"
+            }
+            variant="light"
+          >
+            {item.stav}
+          </Badge>
 
-            {item.stav === "Dostupné" && isSignedIn && (
-              <form action={reserveAction}>
-                <Button type="submit" color="green">
-                  Rezervovat
+        </Group>
+
+        {/* QR PAYMENT CARD */}
+        {item.cena > 0 && item.iban && (
+          <Card
+            radius={24}
+            p={20}
+            style={{
+              border: "1px solid rgba(0,0,0,0.06)",
+              background:
+                "linear-gradient(135deg,#ffffff,#fafafa)",
+            }}
+          >
+            <Stack gap={12}>
+              <Title order={4}>QR platba</Title>
+
+              <Alert color="blue" variant="light">
+                Toto je ukázková platba. Uživatelé si platbu řeší mezi sebou.
+              </Alert>
+
+              {item.stav === "Platba" && isReservedByMe && item.iban && (
+                <Group justify="center">
+                  <Image
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                      `SPD*1.0*ACC:${item.iban}*AM:${item.cena}*CC:CZK`
+                    )}`}
+                    w={220}
+                    h={220}
+                  />
+                </Group>
+              )}
+
+              {item.stav === "Platba" && isReservedByMe && (
+                <form
+                  action={async () => {
+                    "use server";
+
+                    await db
+                      .update(inzeraty)
+                      .set({
+                        stav: "Prodáno",
+                        reservedBy: null,
+                      })
+                      .where(eq(inzeraty.id, itemId));
+
+                    revalidatePath(`/cs/prehled-inzeratu/${itemId}`);
+                  }}
+                >
+                  <Button
+                    type="submit"
+                    fullWidth
+                    radius="xl"
+                    color="green"
+                  >
+                    Potvrdit zaplacení
+                  </Button>
+                </form>
+              )}
+            </Stack>
+          </Card>
+        )}
+
+        {/* CONTACT */}
+        <Card
+          radius={24}
+          p={18}
+          style={{
+            border: "1px solid rgba(0,0,0,0.06)",
+          }}
+        >
+          <Stack gap={6}>
+            <Title order={5}>Kontakt</Title>
+            <Text>Prodejce: {item.prodejce}</Text>
+            <Text>Email: {item.email}</Text>
+          </Stack>
+        </Card>
+
+        {/* ACTIONS */}
+        <Stack gap={10}>
+
+          {item.stav === "Dostupné" && isSignedIn && (
+            <form action={reserveAction}>
+              <Button
+                type="submit"
+                fullWidth
+                radius="xl"
+                color="green"
+              >
+                Rezervovat
+              </Button>
+            </form>
+          )}
+
+          {item.stav === "Rezervováno" && isReservedByMe && (
+            <Group grow>
+              <form action={cancelReservation}>
+                <Button
+                  type="submit"
+                  radius="xl"
+                  variant="light"
+                >
+                  Zrušit
                 </Button>
               </form>
-            )}
 
-            {item.stav === "Rezervováno" && isReservedByMe && (
-              <Group>
-                <form action={cancelReservation}>
-                  <Button type="submit" color="gray">Zrušit rezervaci</Button>
-                </form>
+              <form action={payAction}>
+                <Button
+                  type="submit"
+                  radius="xl"
+                  color="blue"
+                >
+                  Zaplatit
+                </Button>
+              </form>
+            </Group>
+          )}
 
-                <form action={payAction}>
-                  <Button type="submit" color="blue">Zaplatit</Button>
-                </form>
-              </Group>
-            )}
-
-            { (isAdmin || isBlocked) && (
-              <Alert color="yellow">
-                Inzerát je rezervovaný jiným uživatelem
-              </Alert>
-            )}
+          {(isBlocked || (isAdmin && item.stav === "Rezervováno" && !isReservedByMe)) && (
+            <Alert color="yellow" variant="light">
+              Inzerát je rezervovaný jiným uživatelem
+            </Alert>
+          )}
         </Stack>
-      </Card>
-    </Stack>
-  );
+
+      </Stack>
+    </Card>
+  </Stack>
+);
 }

@@ -1,128 +1,3 @@
-// "use client";
-
-// import { useState } from "react";
-// import {
-//   TextInput,
-//   Textarea,
-//   NumberInput,
-//   Select,
-//   Checkbox,
-//   Button,
-//   Card,
-//   Stack,
-//   Title,
-//   FileInput,
-// } from "@mantine/core";
-// import Link from "next/link";
-
-
-
-// export default function InzeratForm() {
-//   const [zdarma, setZdarma] = useState(false);
-//   return (
-//         <Stack>
-
-//                 <Title order={2}>Inzerát</Title>
-
-//                 <TextInput
-//                   label="Název věci"
-//                   name="nazev"
-//                   placeholder="Např. Herní notebook"
-//                   required
-//                 />
-
-//                 <Textarea
-//                   label="Popis"
-//                   name="popis"
-//                   placeholder="Popis inzerátu..."
-//                   required
-//                 />
-
-//                 <NumberInput
-//                   label="Cena"
-//                   name="cena"
-//                   placeholder="5000"
-//                   disabled={zdarma}
-//                   min={0}
-
-//                 />
-
-//                 <Checkbox
-//                   label="Zdarma"
-//                   name="zdarma"
-//                   description="Pokud je inzerát zdarma, cena bude automaticky 0"
-//                   checked={zdarma}
-//                   onChange={(event) => setZdarma(event.currentTarget.checked)}
-//                 />
-
-//                 <TextInput
-//                   label="Účet pro platbu"
-//                   name="iban"
-//                   placeholder="123456789/0800"
-//                 />
-
-//                 <Select
-//                   label="Kategorie"
-//                   name="kategorie"
-//                   data={[
-//                     "Elektronika",
-//                     "Sport",
-//                     "Nábytek",
-//                     "Oblečení",
-//                     "Knihy",
-//                     "Dětské věci",
-//                     "Ostatní"
-//                   ]}
-//                   required
-//                 />
-
-//                 <Select
-//                   label="Stav inzerátu"
-//                   name="stav"
-//                   data={[
-//                     "Dostupné",
-//                     "Rezervované",
-//                     "Prodáno",
-//                   ]}
-//                   required
-//                 />
-
-//                 <TextInput
-//                   label="Jméno prodejce"
-//                   name="prodejce"
-//                   placeholder="Jan Novák"
-//                   required
-//                 />
-
-//                 <TextInput
-//                   label="Email"
-//                   name="email"
-//                   placeholder="email@example.com"
-//                   required
-//                 />
-
-//                 <TextInput
-//                   label="URL obrázku"
-//                   name="obrazek"
-//                   placeholder="https://..."
-
-//                 />
-
-//                 <FileInput
-//                   label="Obrázek"
-//                   name="obrazekFile"
-//                   accept="image/png,image/jpeg,image/webp"
-//                   description="Pokud nahraješ obrázek i zadáš URL, použije se nahraný obrázek."
-
-//                 />
-
-//                 <Button type="submit">
-//                   Uložit inzerát
-//                 </Button>
-
-//               </Stack>
-//   );
-// }
 
 "use client";
 
@@ -137,6 +12,11 @@ import {
   Stack,
   Title,
   FileInput,
+  Paper,
+  Group,
+  Divider,
+  Box,
+  Badge,
 } from "@mantine/core";
 
 type Props = {
@@ -150,115 +30,189 @@ export default function InzeratForm({ inzerat }: Props) {
   );
 
   return (
-    <Stack>
+    <Paper
+      radius={28}
+      p={28}
+      style={{
+        border: "1px solid rgba(0,0,0,0.06)",
+        boxShadow: "0 20px 60px rgba(0,0,0,0.06)",
+        background: "white",
+      }}
+    >
+      <Stack gap={22}>
 
-      <Title order={2}>Inzerát</Title>
+        {/* HEADER */}
+        <Group justify="space-between">
+          <Title
+            order={2}
+            style={{
+              fontSize: 28,
+              fontWeight: 900,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            {inzerat ? "Upravit inzerát" : "Nový inzerát"}
+          </Title>
 
-      <TextInput
-        label="Název věci"
-        name="nazev"
-        defaultValue={inzerat?.nazev || ""}
-        placeholder="Např. Herní notebook"
-        required
-      />
+          <Badge color="orange" variant="light" radius="xl">
+            Marketplace
+          </Badge>
+        </Group>
 
-      <Textarea
-        label="Popis"
-        name="popis"
-        defaultValue={inzerat?.popis || ""}
-        placeholder="Popis inzerátu..."
-        required
-      />
+        <Divider />
 
-      <NumberInput
-        label="Cena"
-        name="cena"
-        defaultValue={inzerat?.cena || 0}
-        placeholder="5000"
-        disabled={zdarma}
-        min={0}
-      />
+        {/* BASIC INFO */}
+        <Stack gap={14}>
+          <TextInput
+            label="Název"
+            name="nazev"
+            defaultValue={inzerat?.nazev || ""}
+            placeholder="Např. Herní notebook"
+            radius="md"
+          />
 
-      <Checkbox
-        label="Zdarma"
-        name="zdarma"
-        description="Pokud je inzerát zdarma, cena bude automaticky 0"
-        checked={zdarma}
-        onChange={(event) =>
-          setZdarma(event.currentTarget.checked)
-        }
-      />
+          <Textarea
+            label="Popis"
+            name="popis"
+            defaultValue={inzerat?.popis || ""}
+            placeholder="Popis inzerátu..."
+            minRows={4}
+            radius="md"
+          />
+        </Stack>
 
-      <TextInput
-        label="Účet pro platbu"
-        name="iban"
-        placeholder="123456789/0800"
-        defaultValue={inzerat?.iban || ""}
-        required={!zdarma}
-      />
+        <Divider label="Cena & platba" labelPosition="center" />
 
-      <Select
-        label="Kategorie"
-        name="kategorie"
-        defaultValue={inzerat?.kategorie || ""}
-        data={[
-          "Elektronika",
-          "Sport",
-          "Nábytek",
-          "Oblečení",
-          "Knihy",
-          "Dětské věci",
-          "Ostatní"
-        ]}
-        required
-      />
+        {/* PRICE SECTION */}
+        <Stack gap={14}>
 
-      <Select
-        label="Stav inzerátu"
-        name="stav"
-        defaultValue={inzerat?.stav || "Dostupné"}
-        data={[
-          "Dostupné",
-          "Rezervované",
-          "Prodáno",
-        ]}
-        required
-      />
+          <Group grow align="flex-end">
 
-      <TextInput
-        label="Jméno prodejce"
-        name="prodejce"
-        placeholder="Jan Novák"
-        defaultValue={inzerat?.prodejce || ""}
-        required
-      />
+            <NumberInput
+              label="Cena"
+              name="cena"
+              defaultValue={inzerat?.cena || 0}
+              placeholder="5000"
+              disabled={zdarma}
+              min={0}
+              radius="md"
+              styles={{
+                input: {
+                  fontWeight: 700,
+                  fontSize: 16,
+                },
+              }}
+            />
 
-      <TextInput
-        label="Email"
-        name="email"
-        placeholder="email@example.com"
-        defaultValue={inzerat?.email || ""}
-        required
-      />
+            <Box w={220}>
+              <TextInput
+                label="Účet pro platbu"
+                name="iban"
+                placeholder="123456789/0800"
+                defaultValue={inzerat?.iban || ""}
+                required={!zdarma}
+              />
+            </Box>
 
-      <TextInput
-        label="URL obrázku"
-        name="obrazek"
-        placeholder="https://..."
-        defaultValue={inzerat?.obrazek || ""}
-      />
+          </Group>
 
-      <FileInput
-        label="Obrázek"
-        name="obrazekFile"
-         description="Pokud nahraješ obrázek i zadáš URL, použije se nahraný obrázek."
-        accept="image/png,image/jpeg,image/webp"
-      />
+          <Checkbox
+            label="Zdarma"
+            name="zdarma"
+            description="Cena bude automaticky nastavena na 0"
+            checked={zdarma}
+            onChange={(event) =>
+              setZdarma(event.currentTarget.checked)
+            }
+            color="orange"
+          />
+        </Stack>
 
-      <Button type="submit">
-        Uložit inzerát
-      </Button>
+        <Divider label="Klasifikace" labelPosition="center" />
 
-    </Stack>
+        {/* META */}
+        <Group grow>
+          <Select
+            label="Kategorie"
+            name="kategorie"
+            defaultValue={inzerat?.kategorie || ""}
+            data={[
+              "Elektronika",
+              "Sport",
+              "Nábytek",
+              "Oblečení",
+              "Knihy",
+              "Dětské věci",
+              "Ostatní",
+            ]}
+            radius="md"
+          />
+
+          <Select
+            label="Stav"
+            name="stav"
+            defaultValue={inzerat?.stav || "Dostupné"}
+            data={["Dostupné", "Rezervované", "Prodáno"]}
+            radius="md"
+          />
+        </Group>
+
+        <Divider label="Kontakt" labelPosition="center" />
+
+        {/* CONTACT */}
+        <Group grow>
+          <TextInput
+            label="Prodejce"
+            name="prodejce"
+            placeholder="Jan Novák"
+            defaultValue={inzerat?.prodejce || ""}
+            radius="md"
+          />
+
+          <TextInput
+            label="Email"
+            name="email"
+            placeholder="email@example.com"
+            defaultValue={inzerat?.email || ""}
+            radius="md"
+          />
+        </Group>
+
+        <Divider label="Média" labelPosition="center" />
+
+        {/* MEDIA */}
+        <Stack gap={14}>
+          <TextInput
+            label="URL obrázku"
+            name="obrazek"
+            placeholder="https://..."
+            defaultValue={inzerat?.obrazek || ""}
+          />
+
+          <FileInput
+            label="Nahrát obrázek"
+            name="obrazekFile"
+            accept="image/png,image/jpeg,image/webp"
+            description="Pokud zadáš URL i soubor, použije se soubor."
+          />
+        </Stack>
+
+        {/* SUBMIT */}
+        <Button
+          type="submit"
+          size="md"
+          radius="xl"
+          fullWidth
+          style={{
+            background: "#ff6a00",
+            fontWeight: 800,
+            boxShadow: "0 15px 40px rgba(255,106,0,0.25)",
+          }}
+        >
+          {inzerat ? "Uložit změny" : "Vytvořit inzerát"}
+        </Button>
+
+      </Stack>
+    </Paper>
   );
 }
