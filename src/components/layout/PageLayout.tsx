@@ -68,11 +68,12 @@ export function PageLayout({
                       radius="xl"
                       size="md"
                       style={{
-                        background: "#ff6b00",
+                        background: "#ff6a00",
                         color: "white",
                         border: "none",
                         fontWeight: 700,
-                        transition: "0.2s",
+                        boxShadow: "0 10px 30px rgba(255,106,0,0.25)",
+                        transition: "all 0.2s ease",
                       }}
                     >
                       Přihlásit se
@@ -80,14 +81,18 @@ export function PageLayout({
                   </SignInButton>
                 ) : (
                   <Paper
-                    radius="xl"
-                    p={4}
-                    style={{
-                      border: "1px solid #e9ecef",
-                      background: "#fff",
-                    }}
+                    //
                   >
-                    <UserButton />
+                    <UserButton
+                      appearance={{
+                        elements: {
+                          userButtonAvatarBox: {
+                            width: 36,
+                            height: 36,
+                          },
+                        },
+                      }}
+                    />
                   </Paper>
                 )}
               </Group>
