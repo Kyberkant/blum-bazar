@@ -121,20 +121,47 @@ async function payAction(formData: FormData) {
   <Stack gap={40}>
 
     {/* TOP NAV */}
-    <Group justify="space-between" align="center">
+    <Group
+      justify="space-between"
+      align="center"
+      style={{
+        padding: "12px 16px",
+        border: "1px solid rgba(0,0,0,0.06)",
+        borderRadius: 999,
+        background: "white",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
+      }}
+    >
+      {/* BACK */}
       <Link href="/cs/prehled-inzeratu" style={{ textDecoration: "none" }}>
-        <Button variant="light" radius="xl">
-          ← Zpět
+        <Button
+          variant="subtle"
+          radius="xl"
+          style={{
+            fontWeight: 600,
+            color: "#000",
+          }}
+          leftSection={<span>←</span>}
+        >
+          Zpět
         </Button>
       </Link>
 
+      {/* ACTIONS */}
       <Group>
         {(isOwner || isAdmin) && (
           <Link
             href={`/cs/prehled-inzeratu/${item.id}/edit`}
             style={{ textDecoration: "none" }}
           >
-            <Button variant="light" radius="xl">
+            <Button
+              variant="subtle"
+              radius="xl"
+              style={{
+                fontWeight: 600,
+                color: "#000",
+              }}
+            >
               Upravit
             </Button>
           </Link>
@@ -145,7 +172,15 @@ async function payAction(formData: FormData) {
             href={`/cs/prehled-inzeratu/${item.id}/smazat`}
             style={{ textDecoration: "none" }}
           >
-            <Button color="red" variant="light" radius="xl">
+            <Button
+              radius="xl"
+              style={{
+                background: "#ff4d4f",
+                color: "white",
+                fontWeight: 700,
+                boxShadow: "0 10px 25px rgba(255,77,79,0.25)",
+              }}
+            >
               Smazat
             </Button>
           </Link>
@@ -367,7 +402,7 @@ async function payAction(formData: FormData) {
             </Group>
           )}
 
-          {(isAdmin || isBlocked) && (
+          {(isBlocked || (isAdmin && item.stav === "Rezervováno" && !isReservedByMe)) && (
             <Alert color="yellow" variant="light">
               Inzerát je rezervovaný jiným uživatelem
             </Alert>
